@@ -1,6 +1,7 @@
-//
-// Created by Jeremiah Hobbs on 6/3/21.
-//
+//Jeremiah Hobbs
+//Patient.h
+//June 7, 2021
+//Header file for Patient that is used in the Patient Priority Queue.
 
 #ifndef HW8_PATIENT_H
 #define HW8_PATIENT_H
@@ -38,15 +39,19 @@ public:
 
     string getName() const{
         return name;
-    };
+    };//Returns the name of the patient
     string getPriority() const{
         return priorityCode;
-    };
+    };//Returns the priority of the patient
 
     int getArrivalOrder(){
         return arrivalOrder;
-    }
-
+    }//Returns the arrival order of the Patient
+    /**
+     * '=' overload operator
+     * @param other The other Patient
+     * @return a new Patient
+     */
     Patient& operator =(const Patient& other){
         if(this != &other){
             name = other.name;
@@ -55,7 +60,11 @@ public:
         }
         return *this;
     }
-    //Does this need to be a const? And I cant use my private methods on const?
+    /**
+     * Overload operator for '<'
+     * @param other Object to be compared
+     * @return true if less than
+     */
     bool operator < (const Patient& other){
         if(compareCode() == other.compareCode()){
             if(arrivalOrder > other.arrivalOrder){
@@ -72,7 +81,11 @@ public:
             return false;
         }
     }
-
+    /**
+     * Overload operator for '>'
+     * @param other Object to be compared
+     * @return true if greater than
+     */
     bool operator > (const Patient& other){
         if(this->compareCode() == other.compareCode()){
             if(this->arrivalOrder < other.arrivalOrder){
@@ -89,7 +102,10 @@ public:
             return false;
         }
     }
-
+    /**
+     * To string method for a patient object
+     * @return Patient in string format
+     */
     string to_string(){
         return(name + "pri = " + this->priorityCode + ". arrive: " +
         std::to_string(arrivalOrder));

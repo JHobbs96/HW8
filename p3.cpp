@@ -1,13 +1,16 @@
-// p3.cpp
-// TODO: add functional documentation (and inline comments, as necessary)
+//Jeremiah Hobbs & Scott McMaster
+//P3.cpp
+//June 7, 2021
+//Driver file that uses the PatientPriorityQueue to facilitate commands input
+//by the user.
 
 #include "PatientPriorityQueue.h"
-#include "Patient.h"
 
 #include <fstream>
 #include <iostream>
-#include <sstream>
 #include <string>
+#include <regex>
+
 using namespace std;
 
 
@@ -60,7 +63,12 @@ int main() {
 	// goodbye message
 	goodbye();
 }
-
+/**
+ * Processes the line passed in by the user.
+ * @param line string passed by the user
+ * @param priQueue queue to place the line in
+ * @return true if line is processed
+ */
 bool processLine(string line, PatientPriorityQueue &priQueue) {
 	// get command
 	string cmd = delimitBySpace(line);
@@ -89,17 +97,23 @@ bool processLine(string line, PatientPriorityQueue &priQueue) {
 
 	return true;
 }
-
+/**
+ * Adds a patient to the priority queue
+ * @param line patients information
+ * @param priQueue queue to add patient into.
+ */
 void addPatientCmd(string line, PatientPriorityQueue &priQueue) {
     string priority, name;
-
     // get priority and name
     priority = delimitBySpace(line);
-    if (priority.length() == 0) {
+    if(priority.length() == 0) {
         cout << "Error: no priority code given.\n";
         return;
     }
     name = line;
+    //Deletes leading and trailing space of names
+    name = std::regex_replace(name, std::regex("^ +| +$|( ) +"),
+                              "$1");
     if (name.length() == 0) {
         cout << "Error: no patient name given.\n";
         return;
@@ -112,7 +126,10 @@ void addPatientCmd(string line, PatientPriorityQueue &priQueue) {
         cout<<"Error: invalid priority code given. \n";
     }
 }
-
+/**
+ * Peek the next patient to receive help at the top of the queue
+ * @param priQueue the Priority Queue
+ */
 void peekNextCmd(PatientPriorityQueue &priQueue) {
     if (priQueue.size() > 0) {
 	cout<<"The patient in line is: " + priQueue.peek().getName()+ "\n";
@@ -121,10 +138,12 @@ void peekNextCmd(PatientPriorityQueue &priQueue) {
         cout<< "Nobody is in the waiting room.\n";
     }
 }
-
+/**
+ * Removes the next person from the queue.
+ * @param priQueue PatientPriorityQueue
+ */
 void removePatientCmd(PatientPriorityQueue &priQueue) {
     if (priQueue.size() > 0) {
-        // TODO: removes and shows next patient to be seen
         cout<<"This patient will now be seen: "+ priQueue.remove().getName() +
         "\n";
     }
@@ -132,14 +151,26 @@ void removePatientCmd(PatientPriorityQueue &priQueue) {
         cout<< "Nobody is in the waiting room.\n";
     }
 }
-
+/**
+ * Shows the current patients in the list
+ * @param priQueue PatientPruorityQueue to be seen
+ */
 void showPatientListCmd(PatientPriorityQueue &priQueue) {
-	cout << "# patients waiting: " << priQueue.size() << endl;
-	cout << "  Arrival #   Priority Code   Patient Name\n"
-		  << "+-----------+---------------+--------------+\n";
-	cout<<priQueue.to_string();
+    if (priQueue.size() > 0) {
+        cout << "# patients waiting: " << priQueue.size() << endl;
+        cout << "  Arrival #   Priority Code   Patient Name\n"
+             << "+-----------+---------------+--------------+\n";
+        cout << priQueue.to_string();
+    }
+    else{
+        cout<< "Nobody is in the waiting room.\n";
+    }
 }
-
+/**
+ * Opens the file and reads the commands in the list
+ * @param filename File to be read
+ * @param priQueue PatientPriorityQueue to be filled
+ */
 void execCommandsFromFileCmd(string filename, PatientPriorityQueue &priQueue) {
 	ifstream infile;
 	string line;
@@ -158,7 +189,11 @@ void execCommandsFromFileCmd(string filename, PatientPriorityQueue &priQueue) {
 	// close file
 	infile.close();
 }
-
+/**
+ * Eliminates space inside of lines passed to the program
+ * @param s string being passed
+ * @return string without space
+ */
 string delimitBySpace(string &s) {
 	unsigned pos = 0;
 	char delimiter = ' ';
@@ -171,7 +206,9 @@ string delimitBySpace(string &s) {
 	}
 	return result;
 }
-
+/**
+ * Prints welcome message to the user
+ */
 void welcome() {
 	cout<<"Hello and Welcome! \n\nThe triage nurse will determine "
        "the patient's priority based on\n"
@@ -180,12 +217,16 @@ void welcome() {
        "indicate the priority.\n\n"
        "Please type in 'help' to find the list of available interactions.\n";
 }
-
+/**
+ * Prints goodbye message to the user
+ */
 void goodbye() {
 	cout<<"\nThanks for using the program. I hope everyone was able to receive"
-       " help. Take care";
+       " help. Take care.";
 }	
-
+/**
+ * Prints the available commands that the user can use.
+ */
 void help() {
 	cout << "add <priority-code> <patient-name>\n"
 << "            Adds the patient to the triage system.\n"
